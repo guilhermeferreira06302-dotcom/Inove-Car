@@ -1,0 +1,7 @@
+{
+  "name": "Inove Car AI - Estética Automotiva",
+  "description": "Premium car detailing application featuring AI-powered car condition analysis and service recommendations.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
