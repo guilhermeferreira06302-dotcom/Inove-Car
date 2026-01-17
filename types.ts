@@ -7,17 +7,11 @@ export interface Service {
   icon: string;
 }
 
+// Added AnalysisResult interface to match the AI analysis output structure
 export interface AnalysisResult {
   condition: string;
   issues: string[];
   recommendedService: string;
-  estimatedCost: string;
   explanation: string;
-}
-
-export enum AppSection {
-  HOME = 'home',
-  SERVICES = 'services',
-  AI_ANALYZE = 'ai_analyze',
-  LOCATION = 'location'
+  estimatedCost: string;
 }
