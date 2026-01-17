@@ -2,11 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { SERVICES, TRUST_BADGES } from './constants';
 import { Service } from './types';
-import AnalysisModal from './components/AnalysisModal';
 import BookingModal from './components/BookingModal';
 
 const App: React.FC = () => {
-  const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
@@ -14,7 +12,7 @@ const App: React.FC = () => {
   
   const phoneNumber = '555192438084';
   const logoUrl = "https://i.postimg.cc/x1phGT2v/Chat-GPT-Image-15-de-jan-de-2026-07-06-57.png";
-  const instagramUrl = "https://www.instagram.com/inove.car_/following/"; // URL atualizada conforme solicitação
+  const instagramUrl = "https://www.instagram.com/inove.car_/following/";
 
   // Sincroniza o estado do tema com a classe no HTML
   useEffect(() => {
@@ -31,14 +29,6 @@ const App: React.FC = () => {
 
   const handleServiceClick = (service: Service) => {
     setSelectedService(service);
-    setIsBookingOpen(true);
-  };
-
-  const handleScheduleFromAnalysis = (serviceName: string) => {
-    // Tenta encontrar o serviço pelo nome retornado pela IA
-    const service = SERVICES.find(s => s.name.toLowerCase().includes(serviceName.toLowerCase())) || SERVICES[0];
-    setSelectedService(service);
-    setIsAnalysisOpen(false);
     setIsBookingOpen(true);
   };
 
@@ -80,7 +70,7 @@ const App: React.FC = () => {
   ];
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col max-w-[480px] mx-auto shadow-2xl bg-background-light dark:bg-background-dark overflow-x-hidden pb-24 text-slate-900 dark:text-slate-100 transition-colors duration-300">
+    <div className="relative flex min-h-screen w-full flex-col max-w-[480px] mx-auto shadow-2xl bg-background-light dark:bg-background-dark overflow-x-hidden pb-12 text-slate-900 dark:text-slate-100 transition-colors duration-300">
       {/* Side Menu Drawer */}
       {isMenuOpen && (
         <div className="fixed inset-0 z-[120] flex justify-end">
@@ -204,16 +194,12 @@ const App: React.FC = () => {
             backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5) 0%, ${isDarkMode ? 'rgba(13, 18, 26, 0.98)' : 'rgba(246, 247, 248, 0.98)'} 100%), url("https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?q=80&w=1000&auto=format&fit=crop")`
           }}>
           <div className="mt-auto space-y-2.5">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30">
-              <span className="material-symbols-outlined text-primary text-sm">auto_awesome</span>
-              <span className="text-primary font-bold text-[10px] uppercase tracking-widest">Tecnologia IA</span>
-            </div>
             <h1 className="text-slate-900 dark:text-white text-4xl font-black leading-[1.1] tracking-tight transition-colors duration-300">
               O <span className="text-primary">Brilho</span> que Seu <br/>
               <span className="text-primary">Veículo Merece.</span>
             </h1>
             <p className="text-slate-600 dark:text-slate-300 text-sm font-normal leading-relaxed max-w-[300px] mx-auto transition-colors duration-300">
-              Nossa IA analisa a condição exata do seu veículo para recomendar o tratamento perfeito.
+              Estética automotiva de alto padrão para quem valoriza cada detalhe.
             </p>
           </div>
           
@@ -236,7 +222,7 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Trust Badges - Movido para antes dos serviços */}
+      {/* Trust Badges */}
       <section className="bg-slate-100 dark:bg-slate-900/50 pt-4 pb-4 px-4 transition-colors duration-300">
         <h2 className="text-center text-slate-900 dark:text-white text-[22px] font-black leading-tight tracking-tight mb-6 transition-colors">O Padrão Inove Car</h2>
         <div className="grid grid-cols-2 gap-4">
@@ -328,25 +314,7 @@ const App: React.FC = () => {
         </p>
       </footer>
 
-      {/* Floating Action Button */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] p-4 bg-gradient-to-t from-background-light dark:from-background-dark via-background-light/80 dark:via-background-dark/80 to-transparent z-[60]">
-        <button 
-          onClick={() => setIsAnalysisOpen(true)}
-          className="w-full h-14 bg-primary text-white rounded-2xl shadow-2xl flex items-center justify-center gap-3 font-black text-lg active:scale-[0.97] hover:brightness-110 transition-all duration-200 group overflow-hidden relative"
-        >
-          <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-none"></div>
-          <span className="material-symbols-outlined text-2xl relative group-hover:animate-bounce">auto_awesome</span>
-          <span className="relative">Analisar meu Veículo</span>
-        </button>
-      </div>
-
-      {/* Modals */}
-      <AnalysisModal 
-        isOpen={isAnalysisOpen} 
-        onClose={() => setIsAnalysisOpen(false)} 
-        onScheduleService={handleScheduleFromAnalysis}
-      />
-      
+      {/* Booking Modal */}
       <BookingModal 
         isOpen={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
