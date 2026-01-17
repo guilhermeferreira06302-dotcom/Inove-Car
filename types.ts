@@ -7,7 +7,7 @@ export interface Service {
   icon: string;
 }
 
-// Added AnalysisResult interface to match the AI analysis output structure
+// Added AnalysisResult interface to support AI car analysis features
 export interface AnalysisResult {
   condition: string;
   issues: string[];
