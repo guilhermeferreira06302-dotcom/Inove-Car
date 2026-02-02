@@ -27,12 +27,8 @@ export default async function handler(req: Request) {
       return jsonResponse({ success: false, error: 'Imagem não fornecida.' }, 400);
     }
 
-    const apiKey = process.env.API_KEY;
-    if (!apiKey) {
-      return jsonResponse({ success: false, error: 'Configuração do servidor incompleta (API_KEY).' }, 500);
-    }
-
-    const ai = new GoogleGenAI({ apiKey });
+    // Always use new GoogleGenAI({apiKey: process.env.API_KEY}) and use the key directly
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
     const base64Data = image.includes(',') ? image.split(',')[1] : image;
 
     const prompt = `Você é um mestre em estética automotiva premium. Analise a imagem fornecida.
@@ -77,6 +73,7 @@ export default async function handler(req: Request) {
       },
     });
 
+    // Use response.text property directly, not as a method
     if (!response.text) throw new Error("Resposta da IA vazia");
 
     const analysis = JSON.parse(response.text);
