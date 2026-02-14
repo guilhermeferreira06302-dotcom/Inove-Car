@@ -1,0 +1,1 @@
+// Arquivo deletado - Migrado para Google Sheets
