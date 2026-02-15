@@ -23,8 +23,8 @@ const OpeningHoursModal: React.FC<OpeningHoursModalProps> = ({ isOpen, onClose }
           <div className="size-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4">
             <span className="material-symbols-outlined text-3xl">schedule</span>
           </div>
-          <h3 className="text-2xl font-black uppercase tracking-tight dark:text-white">Funcionamento</h3>
-          <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-1">Horários da Unidade</p>
+          <h3 className="text-2xl font-black uppercase tracking-tight dark:text-white leading-none">Funcionamento</h3>
+          <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-2">Horários da Unidade</p>
         </div>
 
         <div className="space-y-4">
@@ -37,15 +37,15 @@ const OpeningHoursModal: React.FC<OpeningHoursModalProps> = ({ isOpen, onClose }
 
           <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 transition-all">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-black uppercase text-primary">Sábado</span>
-              <span className="text-xs font-black text-primary">08:00 — 18:00</span>
+              <span className="text-xs font-black uppercase text-primary tracking-wider">Sábado</span>
+              <span className="text-xs font-black text-emerald-600 dark:text-emerald-400">08:00 — 17:00</span>
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 transition-all">
+          <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 transition-all">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-black uppercase text-emerald-600 dark:text-emerald-400">Domingo</span>
-              <span className="text-xs font-black uppercase text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full">Aberto</span>
+              <span className="text-xs font-black uppercase text-primary tracking-wider">Domingo</span>
+              <span className="text-xs font-black text-emerald-600 dark:text-emerald-400">08:00 — 17:00</span>
             </div>
           </div>
         </div>

@@ -15,6 +15,7 @@ const App: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   
   const logoUrl = "https://i.postimg.cc/x1phGT2v/Chat-GPT-Image-15-de-jan-de-2026-07-06-57.png";
+  const whatsappNumber = "555192438084";
 
   useEffect(() => {
     const savedUser = localStorage.getItem('inove_car_user');
@@ -37,6 +38,15 @@ const App: React.FC = () => {
     localStorage.removeItem('inove_car_user');
     setUser(null);
   };
+
+  const handleLocationRedirect = () => {
+    // Coordenadas: 29°24'51.4"S 52°03'00.4"W
+    const mapsUrl = "https://www.google.com/maps?q=-29.414278,-52.050111";
+    window.open(mapsUrl, '_blank');
+  };
+
+  // O botão flutuante aparece apenas se nenhum modal estiver aberto
+  const isAnyModalOpen = isBookingOpen || isAuthOpen || isHoursOpen;
 
   return (
     <div className="relative flex min-h-screen w-full flex-col max-w-[480px] mx-auto shadow-2xl bg-background-light dark:bg-background-dark overflow-x-hidden pb-12 transition-colors duration-300">
@@ -66,10 +76,10 @@ const App: React.FC = () => {
         </div>
       </nav>
 
-      <header className="relative h-[480px] flex flex-col items-center justify-center text-center px-8 overflow-hidden">
+      <header className="relative h-[540px] flex flex-col items-center justify-center text-center px-8 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img src="https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?q=80&w=1000" className="w-full h-full object-cover" alt="Fundo" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-background-light dark:to-background-dark"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-background-light dark:to-background-dark"></div>
         </div>
         
         <div className="relative z-10 space-y-6">
@@ -87,9 +97,15 @@ const App: React.FC = () => {
           <div className="pt-4 flex flex-col gap-3">
             <button 
               onClick={() => document.getElementById('services-section')?.scrollIntoView({ behavior: 'smooth' })} 
-              className="h-14 px-10 bg-primary text-white rounded-2xl font-black shadow-2xl flex items-center justify-center gap-2 hover:scale-105 active:scale-95 transition-all w-full"
+              className="h-14 px-10 bg-primary text-white rounded-2xl font-black shadow-2xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all w-full"
             >
               <span className="material-symbols-outlined">calendar_month</span> Ver Horários e Agendar
+            </button>
+            <button 
+              onClick={handleLocationRedirect}
+              className="h-14 px-10 bg-white/10 text-white rounded-2xl font-black backdrop-blur-md border border-white/20 flex items-center justify-center gap-2 hover:bg-white/20 active:scale-95 transition-all w-full"
+            >
+              <span className="material-symbols-outlined">location_on</span> Localização
             </button>
           </div>
         </div>
@@ -125,6 +141,20 @@ const App: React.FC = () => {
           ))}
         </div>
       </section>
+
+      {/* Botão Flutuante do WhatsApp */}
+      {!isAnyModalOpen && (
+        <a 
+          href={`https://wa.me/${whatsappNumber}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed bottom-6 right-6 z-[100] size-14 bg-whatsapp text-white rounded-full shadow-2xl flex items-center justify-center animate-in fade-in slide-in-from-bottom-4 duration-500 hover:scale-110 active:scale-90 transition-all group"
+          title="Fale conosco no WhatsApp"
+        >
+          <div className="absolute inset-0 rounded-full bg-whatsapp animate-ping opacity-20 group-hover:hidden"></div>
+          <span className="material-symbols-outlined text-[28px] relative z-10">chat</span>
+        </a>
+      )}
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} onSuccess={setUser} />
       
