@@ -34,20 +34,20 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, service, u
   const [currentYear] = useState(new Date().getFullYear());
   const [activeMonth, setActiveMonth] = useState(new Date().getMonth());
 
-  // Gera sábados e domingos para o mês ativo, ignorando os dias que já passaram
+  // Gera apenas sábados para o mês ativo, ignorando os dias que já passaram
   const dates = useMemo(() => {
-    const weekendDates = [];
+    const availableDates = [];
     const date = new Date(currentYear, activeMonth, 1);
     const now = new Date();
     now.setHours(0, 0, 0, 0);
 
     while (date.getMonth() === activeMonth) {
       const day = date.getDay();
-      // 0 = Domingo, 6 = Sábado
-      if ((day === 0 || day === 6)) {
+      // 6 = Sábado (Conforme solicitação: apresentar somente os dias de sábado)
+      if (day === 6) {
         // Apenas adiciona se a data for hoje ou futura
         if (date >= now) {
-          weekendDates.push({
+          availableDates.push({
             dayName: date.toLocaleDateString('pt-BR', { weekday: 'short' }).toUpperCase().replace('.', ''),
             dayNum: date.getDate(),
             monthName: date.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', ''),
@@ -58,7 +58,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, service, u
       }
       date.setDate(date.getDate() + 1);
     }
-    return weekendDates;
+    return availableDates;
   }, [activeMonth, currentYear]);
 
   useEffect(() => {

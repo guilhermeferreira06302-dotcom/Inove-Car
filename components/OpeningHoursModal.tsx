@@ -42,10 +42,10 @@ const OpeningHoursModal: React.FC<OpeningHoursModalProps> = ({ isOpen, onClose }
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 transition-all">
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-transparent hover:border-primary/20 transition-all">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-black uppercase text-primary tracking-wider">Domingo</span>
-              <span className="text-xs font-black text-emerald-600 dark:text-emerald-400">08:00 — 17:00</span>
+              <span className="text-xs font-black uppercase text-slate-400">Domingo</span>
+              <span className="text-xs font-black uppercase text-red-500 bg-red-500/10 px-3 py-1 rounded-full">Fechado</span>
             </div>
           </div>
         </div>
