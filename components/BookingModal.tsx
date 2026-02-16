@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Service } from '../types';
 import { bookingService, Slot } from '../services/bookingService';
@@ -34,25 +33,65 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, service, u
   const [currentYear] = useState(new Date().getFullYear());
   const [activeMonth, setActiveMonth] = useState(new Date().getMonth());
 
-  // Gera apenas sábados para o mês ativo, ignorando os dias que já passaram
+  // ✅ Timer para atualizar o status "ENCERRADO" em tempo real
+  const [nowTick, setNowTick] = useState(Date.now());
+  useEffect(() => {
+    if (isOpen) {
+      const id = window.setInterval(() => setNowTick(Date.now()), 60 * 1000);
+      return () => window.clearInterval(id);
+    }
+  }, [isOpen]);
+
+  // ✅ Verifica se o horário já passou (com margem de 20 min) apenas se for hoje
+  const isPast = (selectedIsoDate: string, time: string) => {
+    const [hours, minutes] = time.split(":").map(Number);
+    const now = new Date(nowTick);
+    const slotDate = new Date();
+    const [y, m, d] = selectedIsoDate.split("-").map(Number);
+    
+    slotDate.setFullYear(y, m - 1, d);
+    slotDate.setHours(hours, minutes, 0, 0);
+
+    const isToday =
+      slotDate.getFullYear() === now.getFullYear() &&
+      slotDate.getMonth() === now.getMonth() &&
+      slotDate.getDate() === now.getDate();
+
+    if (!isToday) {
+      // Se não for hoje, mas for data passada (proteção extra)
+      if (slotDate < now) {
+        now.setHours(0,0,0,0);
+        const dayOnlySlot = new Date(slotDate);
+        dayOnlySlot.setHours(0,0,0,0);
+        return dayOnlySlot < now;
+      }
+      return false;
+    }
+
+    // Bloqueia 20 min antes do horário
+    return now.getTime() > slotDate.getTime() - 20 * 60 * 1000;
+  };
+
   const dates = useMemo(() => {
     const availableDates = [];
     const date = new Date(currentYear, activeMonth, 1);
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     while (date.getMonth() === activeMonth) {
       const day = date.getDay();
-      // 6 = Sábado (Conforme solicitação: apresentar somente os dias de sábado)
-      if (day === 6) {
-        // Apenas adiciona se a data for hoje ou futura
-        if (date >= now) {
+      const isSaturday = day === 6;
+      
+      // Para fins de teste/produção, podemos incluir hoje se o usuário desejar, 
+      // mas mantemos a regra de negócio original: Sábados.
+      if (isSaturday) {
+        if (date >= today) {
           availableDates.push({
             dayName: date.toLocaleDateString('pt-BR', { weekday: 'short' }).toUpperCase().replace('.', ''),
             dayNum: date.getDate(),
             monthName: date.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', ''),
             fullDate: date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }),
-            isoDate: date.toISOString().split('T')[0]
+            isoDate: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
           });
         }
       }
@@ -117,17 +156,6 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, service, u
       setErrorMsg(result.error || "Erro ao realizar agendamento.");
     }
     setLoading(false);
-  };
-
-  const isPast = (time: string) => {
-    if (!dates[selectedDateIdx]) return true;
-    const [hours, minutes] = time.split(':').map(Number);
-    const now = new Date();
-    const slotDate = new Date();
-    const dParts = dates[selectedDateIdx].isoDate.split('-').map(Number);
-    slotDate.setFullYear(dParts[0], dParts[1] - 1, dParts[2]);
-    slotDate.setHours(hours, minutes, 0, 0);
-    return slotDate < now;
   };
 
   if (!isOpen || !service) return null;
@@ -243,12 +271,6 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, service, u
                         </div>
                       )}
                     </div>
-                    {/* Indicador visual de scroll lateral (no caso vertical) */}
-                    {dates.length > 4 && viewMode === 'days' && (
-                      <div className="h-1 bg-slate-100 dark:bg-slate-800 flex justify-center">
-                         <div className="w-12 h-full bg-primary/30 rounded-full"></div>
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
@@ -263,7 +285,9 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, service, u
                 <div className="grid grid-cols-3 gap-2">
                   {FIXED_HOURS.map((hour) => {
                     const apiSlot = apiSlots.find(s => s.time === hour);
-                    const isOccupied = apiSlot?.status === 'ocupado' || isPast(hour);
+                    const selectedIsoDate = dates[selectedDateIdx]?.isoDate;
+                    const past = selectedIsoDate ? isPast(selectedIsoDate, hour) : false;
+                    const isOccupied = apiSlot?.status === 'ocupado' || past;
                     const isSelected = selectedTime === hour;
 
                     return (
@@ -273,14 +297,14 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, service, u
                         onClick={() => setSelectedTime(hour)} 
                         className={`h-16 rounded-2xl font-black text-xs border-2 transition-all flex flex-col items-center justify-center gap-0.5
                           ${isOccupied 
-                            ? 'opacity-20 bg-slate-100 dark:bg-slate-800 cursor-not-allowed border-transparent line-through text-slate-400' 
+                            ? 'opacity-20 bg-slate-100 dark:bg-slate-800 cursor-not-allowed border-transparent text-slate-400' 
                             : isSelected 
                               ? 'bg-primary border-primary text-white shadow-xl scale-[1.05] z-10 ring-4 ring-primary/20' 
                               : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 text-slate-600 dark:text-slate-300 hover:border-primary/50'
                           }
                         `}
                       >
-                        <span className="text-sm">{hour}</span>
+                        <span className="text-sm">{past ? "ENCERRADO" : hour}</span>
                         {!isOccupied && !isSelected && <span className="text-[7px] uppercase tracking-widest font-black opacity-40">Livre</span>}
                         {isSelected && <span className="text-[7px] uppercase tracking-widest font-black">Selecionado</span>}
                       </button>
